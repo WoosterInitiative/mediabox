@@ -35,6 +35,9 @@ daemonun=$(grep CPDAEMONUN 1.env | cut -d = -f2)
 daemonpass=$(grep CPDAEMONPASS 1.env | cut -d = -f2)
 piauname=$(grep PIAUNAME 1.env | cut -d = -f2)
 piapass=$(grep PIAPASS 1.env | cut -d = -f2)
+dldirectory=$(grep DLDIR 1.env | cut -d = -f2)
+#comdldirector=$(grep CDLDIR 1.env | cut -d = -f2)
+#incdldirectory=$(grep IDLDIR 1.env | cut -d = -f2)
 tvdirectory=$(grep TVDIR 1.env | cut -d = -f2)
 moviedirectory=$(grep MOVIEDIR 1.env | cut -d = -f2)
 musicdirectory=$(grep MUSICDIR 1.env | cut -d = -f2)
@@ -43,6 +46,7 @@ printf "These are the Media Directory paths currently configured.\\n"
 printf "TV Directory is: $tvdirectory \\n"
 printf "MOVIE Directory is: $moviedirectory \\n"
 printf "MUSIC Directory is: $musicdirectory \\n"
+printf "DOWNLOAD Directory is: $dldirectory \\n"
 read -n 1 -p "Are these directiores still correct? (y/n) " diranswer
 # Now we need ".env" to exist again so we can stop just the Medaibox containers
 mv 1.env .env
@@ -130,11 +134,13 @@ printf "\\n\\n"
 read -r -p "Where do store your TV media? (Please use full path - /path/to/tv ): " tvdirectory
 read -r -p "Where do store your MOVIE media? (Please use full path - /path/to/movies ): " moviedirectory
 read -r -p "Where do store your MUSIC media? (Please use full path - /path/to/music ): " musicdirectory
+read -r -p "Where do you store your DOWNLOADS? (Please use full path - /path/to/downloads ): " dldirectory
 fi
 if [ "$diranswer" == "n" ]; then
 read -r -p "Where do store your TV media? (Please use full path - /path/to/tv ): " tvdirectory
 read -r -p "Where do store your MOVIE media? (Please use full path - /path/to/movies ): " moviedirectory
 read -r -p "Where do store your MUSIC media? (Please use full path - /path/to/music ): " musicdirectory
+read -r -p "Where do you store your DOWNLOADS? (Please use full path - /path/to/downloads ): " dldirectory
 fi
 # Create the directory structure
 if [ -z "$tvdirectory" ]; then
@@ -149,8 +155,21 @@ if [ -z "$musicdirectory" ]; then
     mkdir -p content/music
     musicdirectory="$PWD/content/music"
 fi
-mkdir -p content/completed
-mkdir -p content/incomplete
+# WoosterInitiative: create completed and incomplete folders in correct locations
+if [ -z "$dldirectory" ]; then
+    mkdir -p content/completed
+    mkdir -p content/incomplete
+    dldirectory="$PWD/content"
+    #comdldirectory="$PWD/content/completed"
+    #incdldirectory="$PWD/content/incomplete"
+else
+  mkdir -p "$dldirectory"/completed
+  mkdir -p "$dldirectory"/incomplete
+  #comdldirectory="$PWD/$dldirectory/completed"
+  #incdldirectory="$PWD/$dldirectory/incomplete"
+fi
+#mkdir -p content/completed
+#mkdir -p content/incomplete
 mkdir -p couchpotato
 mkdir -p delugevpn
 mkdir -p delugevpn/config/openvpn
@@ -218,6 +237,9 @@ echo "PWD=$PWD" >> .env
 echo "TVDIR=$tvdirectory" >> .env
 echo "MOVIEDIR=$moviedirectory" >> .env
 echo "MUSICDIR=$musicdirectory" >> .env
+echo "DLDIR=$dldirectory" >> .env
+#echo "CDLDIR=$comdldirectory" >> .env
+#echo "IDLDIR=$incdldirectory" >> .env
 echo "PIAUNAME=$piauname" >> .env
 echo "PIAPASS=$piapass" >> .env
 echo "CIDR_ADDRESS=$lannet" >> .env
@@ -260,9 +282,11 @@ printf "This may take a few minutes...\\n\\n"
 while [ ! -f delugevpn/config/core.conf ]; do sleep 1; done
 docker stop delugevpn > /dev/null 2>&1
 rm delugevpn/config/core.conf~ > /dev/null 2>&1
-perl -i -pe 's/"allow_remote": false,/"allow_remote": true,/g'  delugevpn/config/core.conf
-perl -i -pe 's/"move_completed": false,/"move_completed": true,/g'  delugevpn/config/core.conf
-#lienmeat: adds the execute extention if not already added
+sed -i.bak 's/"allow_remote": false,/"allow_remote": true,/g'  delugevpn/config/core.conf
+sed -i.bak 's/"move_completed": false,/"move_completed": true,/g'  delugevpn/config/core.conf
+#sed -i.bak s/"\"move_completed_path\": \"/data/completed\",/\"move_completed_path\": \"$comdldirectory\""/g delugevpn/config/core.conf
+#sed -i.bak s/"\"download_location\": \"/data/incomplete\",/\"download_location\": \"$incdldirectory\""/g delugevpn/config/core.conf
+#lienmeat: adds the execute extension if not already added
 sed -i.bak s/"\"enabled_plugins\": \[\]/\"enabled_plugins\": \[\"Execute\"\]"/g delugevpn/config/core.conf
 docker start delugevpn > /dev/null 2>&1
 

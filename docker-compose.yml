@@ -65,7 +65,7 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
         volumes:
-            - './content:/data'
+            - '${DLDIR}:/data'
             - './delugevpn/config:/config'
             - './conf/delugevpn/scripts:/config/scripts'
             - './conf/delugevpn/extract.conf:/config/execute.conf'
