@@ -262,6 +262,8 @@ docker stop delugevpn > /dev/null 2>&1
 rm delugevpn/config/core.conf~ > /dev/null 2>&1
 perl -i -pe 's/"allow_remote": false,/"allow_remote": true,/g'  delugevpn/config/core.conf
 perl -i -pe 's/"move_completed": false,/"move_completed": true,/g'  delugevpn/config/core.conf
+#lienmeat: adds the execute extention if not already added
+sed -i.bak s/"\"enabled_plugins\": \[\]/\"enabled_plugins\": \[\"Execute\"\]"/g delugevpn/config/core.conf
 docker start delugevpn > /dev/null 2>&1
 
 # Configure NZBGet
