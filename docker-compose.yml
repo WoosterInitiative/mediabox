@@ -28,7 +28,7 @@ services:
             - PGID=${PGID}
         volumes:
             - './couchpotato:/config'
-            - './content/completed:/downloads'
+            - '${DLDIR}/completed:/downloads'
             - '${MOVIEDIR}:/movies'
             - '/etc/localtime:/etc/localtime:ro'
 
@@ -106,7 +106,7 @@ services:
             - TZ=${TZ}
         volumes:
             - './headphones:/config'
-            - './content/completed:/downloads'
+            - '${DLDIR}/completed:/downloads'
             - '${MUSICDIR}:/music'
 
     # ----------------------------------------
@@ -124,7 +124,7 @@ services:
             - PGID=${PGID}
         volumes:
             - './jackett:/config'
-            - './content/completed:/downloads'
+            - '${DLDIR}/completed:/downloads'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
@@ -195,7 +195,7 @@ services:
           - '${IP_ADDRESS}:6789:6789'
         volumes:
           - './nzbget:/config'
-          - './content/completed:/downloads'
+          - '${DLDIR}/completed:/downloads'
 
     # ----------------------------------------
     # OMBI
@@ -281,7 +281,7 @@ services:
             - PGID=${PGID}
         volumes:
             - './radarr:/config'
-            - './content/completed:/data/completed'
+            - '${DLDIR}/completed:/data/completed'
             - '${MOVIEDIR}:/movies'
             - '/etc/localtime:/etc/localtime:ro'
 
@@ -300,7 +300,7 @@ services:
             - PGID=${PGID}
         volumes:
             - './sickrage:/config'
-            - './content/completed:/downloads'
+            - '${DLDIR}/completed:/downloads'
             - '${TVDIR}:/tv'
             - '/etc/localtime:/etc/localtime:ro'
 
@@ -320,7 +320,7 @@ services:
             - TZ=${TZ}
         volumes:
             - './sonarr:/config'
-            - './content/completed:/data/completed'
+            - '${DLDIR}/completed:/data/completed'
             - '${TVDIR}:/tv'
             - '/etc/localtime:/etc/localtime:ro'
 
