@@ -283,6 +283,7 @@ services:
             - './radarr:/config'
             - '${DLDIR}/completed:/data/completed'
             - '${MOVIEDIR}:/movies'
+            - './conf/radarr/scripts:/scripts'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
@@ -322,6 +323,7 @@ services:
             - './sonarr:/config'
             - '${DLDIR}/completed:/data/completed'
             - '${TVDIR}:/tv'
+            - './conf/sonarr/scripts:/scripts'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
